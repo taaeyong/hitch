@@ -1,0 +1,26 @@
+# Python / general
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# Private raw relationship data: track only safe scaffold docs/placeholders.
+raw/**
+!raw/
+!raw/README.md
+!raw/**/
+!raw/**/.gitkeep
+
+# Private source drops that may appear at repo root.
+*.csv
+*.txt
+
+# Generated private/derived data: track only safe scaffold docs/placeholders.
+data/**
+!data/
+!data/README.md
+!data/**/
+!data/**/.gitkeep
+
+# Local runtime / operator files
+ops/run-status.md
