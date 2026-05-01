@@ -9,8 +9,9 @@ from typing import Any
 from .config import telegram_token
 from .demo import prepare
 from .graph import GRAPH_PATH, export_graph
+from .simulation import SIMULATION_EFFECTS_PATH, SIMULATION_SNAPSHOT_PATH
 from .simulation import run_simulation
-from .storage import read_json, write_json
+from .storage import read_json, read_jsonl, write_json
 from .wiki import SUMMARY_PATH
 
 
@@ -98,7 +99,12 @@ def handle_text(text: str, chat_id: int, client: TelegramClient) -> None:
         )
     elif normalized.startswith("/graph"):
         graph = export_graph()
-        client.send_message(chat_id, f"Graph ready: {GRAPH_PATH} nodes={len(graph['nodes'])} edges={len(graph['edges'])}")
+        snapshot = read_json(SIMULATION_SNAPSHOT_PATH, {})
+        effect_count = snapshot.get("effect_count", len(read_jsonl(SIMULATION_EFFECTS_PATH)))
+        client.send_message(
+            chat_id,
+            f"Graph ready: {GRAPH_PATH} nodes={len(graph['nodes'])} edges={len(graph['edges'])} effects={effect_count}",
+        )
     else:
         result = run_simulation(normalized, source="telegram")
         export_graph()

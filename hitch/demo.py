@@ -7,7 +7,7 @@ from .config import telegram_token
 from .graph import GRAPH_PATH, export_graph
 from .ingest import DEFAULT_RAW_CSV, ingest_girlfriend_csv
 from .paths import DATA_DIR, ENV_FILE, ensure_data_dirs
-from .simulation import run_simulation
+from .simulation import SIMULATION_EFFECTS_PATH, SIMULATION_SNAPSHOT_PATH, run_simulation
 from .storage import write_json
 from .wiki import SUMMARY_PATH, create_or_refresh_space, build_wiki_state
 
@@ -23,6 +23,8 @@ def prepare() -> dict[str, Any]:
         "ingest": ingest_meta,
         "summary_path": str(SUMMARY_PATH),
         "graph_path": str(GRAPH_PATH),
+        "simulation_effects_path": str(SIMULATION_EFFECTS_PATH),
+        "simulation_snapshot_path": str(SIMULATION_SNAPSHOT_PATH),
         "graph_nodes": len(graph["nodes"]),
         "graph_edges": len(graph["edges"]),
     }
@@ -42,7 +44,13 @@ def rehearse(prompt: str) -> dict[str, Any]:
             "telegram_ready": bool(telegram_token(required=False)),
         },
     )
-    return {"report_path": str(report_path), "simulation": simulation, "graph_nodes": len(graph["nodes"])}
+    return {
+        "report_path": str(report_path),
+        "simulation": simulation,
+        "simulation_effects_path": str(SIMULATION_EFFECTS_PATH),
+        "simulation_snapshot_path": str(SIMULATION_SNAPSHOT_PATH),
+        "graph_nodes": len(graph["nodes"]),
+    }
 
 
 def check_environment(require_token: bool = False) -> dict[str, Any]:
@@ -66,6 +74,10 @@ def print_result(title: str, payload: dict[str, Any]) -> None:
             print(f"- partner_perspective_estimate: {value.get('partner_perspective_estimate')}")
             print(f"- gap_or_alignment_note: {value.get('gap_or_alignment_note')}")
             print(f"- uncertainty: {value.get('uncertainty')}")
+        elif key == "simulation_effects_path":
+            print(f"- {key}: {value}")
+        elif key == "simulation_snapshot_path":
+            print(f"- {key}: {value}")
         else:
             print(f"- {key}: {value}")
 

@@ -4,10 +4,11 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from hitch import simulation
+from hitch import telegram, wiki
 from hitch.ingest import parse_csv
 from hitch.simulation import run_simulation
-from hitch.storage import append_jsonl, write_jsonl
-from hitch import telegram, wiki
+from hitch.storage import append_jsonl, read_json, read_jsonl, write_jsonl
 
 
 class FakeTelegramClient:
@@ -34,6 +35,48 @@ class IngestTests(unittest.TestCase):
         self.assertIn("partner_perspective_estimate", result)
         self.assertIn("uncertainty", result)
         self.assertEqual(result["signal_delta"]["simulated_loop_turns"], 1)
+
+    def test_simulation_persists_effect_and_snapshot(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            original_simulation_paths = (
+                simulation.SUMMARY_PATH,
+                simulation.SIMULATION_RUNS_PATH,
+                simulation.SIMULATION_EFFECTS_PATH,
+                simulation.SIMULATION_SNAPSHOT_PATH,
+            )
+            original_wiki_paths = (
+                wiki.SUMMARY_PATH,
+                wiki.INTERACTIONS_PATH,
+            )
+            try:
+                summary_path = root / "summary.json"
+                simulation.SUMMARY_PATH = summary_path
+                wiki.SUMMARY_PATH = summary_path
+                wiki.INTERACTIONS_PATH = root / "interaction_deltas.jsonl"
+                simulation.SIMULATION_RUNS_PATH = root / "runs.jsonl"
+                simulation.SIMULATION_EFFECTS_PATH = root / "effects.jsonl"
+                simulation.SIMULATION_SNAPSHOT_PATH = root / "latest_snapshot.json"
+
+                result = simulation.run_simulation("이번 주 신호 점검", source="test")
+                effects = read_jsonl(root / "effects.jsonl")
+                snapshot = read_json(root / "latest_snapshot.json", {})
+            finally:
+                (
+                    simulation.SUMMARY_PATH,
+                    simulation.SIMULATION_RUNS_PATH,
+                    simulation.SIMULATION_EFFECTS_PATH,
+                    simulation.SIMULATION_SNAPSHOT_PATH,
+                ) = original_simulation_paths
+                (
+                    wiki.SUMMARY_PATH,
+                    wiki.INTERACTIONS_PATH,
+                ) = original_wiki_paths
+
+        self.assertEqual(len(effects), 1)
+        self.assertEqual(effects[0]["simulation_run_id"], result["id"])
+        self.assertEqual(snapshot["latest_simulation_run_id"], result["id"])
+        self.assertEqual(snapshot["effect_count"], 1)
 
     def test_wiki_refresh_preserves_simulation_delta_count(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
