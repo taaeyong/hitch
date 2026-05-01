@@ -1,0 +1,857 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hitch Product Harness</title>
+    <meta
+      name="description"
+      content="A layered product systems diagram for Hitch, a Telegram-first relationship coaching product."
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #050309;
+        --panel: rgba(21, 13, 34, 0.78);
+        --panel-strong: rgba(33, 20, 53, 0.9);
+        --line: rgba(255, 255, 255, 0.15);
+        --line-strong: rgba(236, 198, 255, 0.42);
+        --text: #fff8ff;
+        --muted: #cfc1dc;
+        --soft: #eee3f7;
+        --pink: #ff9fcf;
+        --rose: #ffc1dd;
+        --lavender: #c8b4ff;
+        --violet: #8f5dff;
+        --deep: #14091f;
+        --mint: #94ffe0;
+        --gold: #ffe2a6;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-width: 320px;
+        min-height: 100vh;
+        margin: 0;
+        color: var(--text);
+        background:
+          radial-gradient(circle at 18% 20%, rgba(255, 159, 207, 0.24), transparent 24rem),
+          radial-gradient(circle at 78% 10%, rgba(143, 93, 255, 0.33), transparent 26rem),
+          radial-gradient(circle at 64% 88%, rgba(255, 193, 221, 0.16), transparent 32rem),
+          linear-gradient(135deg, #050309 0%, #090512 42%, #180821 100%);
+        overflow-x: hidden;
+      }
+
+      body::before {
+        position: fixed;
+        inset: 0;
+        z-index: -2;
+        pointer-events: none;
+        content: "";
+        background:
+          linear-gradient(rgba(255, 255, 255, 0.024) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+        background-size: 72px 72px;
+        mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent 82%);
+      }
+
+      body::after {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        content: "";
+        background:
+          radial-gradient(circle at 50% 52%, rgba(255, 255, 255, 0.09), transparent 0 1px, transparent 1px),
+          linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+        background-size: 22px 22px, 100% 100%;
+        opacity: 0.24;
+      }
+
+      main {
+        width: min(1520px, calc(100% - 48px));
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 40px 0;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: end;
+        gap: 32px;
+        margin-bottom: 30px;
+      }
+
+      .eyebrow {
+        margin: 0 0 14px;
+        color: var(--rose);
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(3rem, 6vw, 6.8rem);
+        line-height: 0.92;
+        letter-spacing: 0;
+      }
+
+      .lede {
+        max-width: 760px;
+        margin: 18px 0 0;
+        color: var(--soft);
+        font-size: clamp(1rem, 1.45vw, 1.35rem);
+        line-height: 1.55;
+      }
+
+      .legend {
+        display: grid;
+        grid-template-columns: repeat(2, auto);
+        gap: 10px 16px;
+        padding: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.13);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.055);
+        box-shadow: 0 18px 70px rgba(0, 0, 0, 0.28);
+        backdrop-filter: blur(18px);
+      }
+
+      .legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        color: var(--muted);
+        font-size: 0.82rem;
+        white-space: nowrap;
+      }
+
+      .legend i {
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+        background: var(--pink);
+        box-shadow: 0 0 18px currentColor;
+      }
+
+      .legend .structured i {
+        background: var(--lavender);
+      }
+
+      .legend .grounding i {
+        background: var(--mint);
+      }
+
+      .legend .fallback i {
+        background: var(--gold);
+      }
+
+      .diagram {
+        position: relative;
+        display: grid;
+        grid-template-columns: 0.9fr 1.12fr 1.4fr 1.12fr 0.9fr;
+        gap: 18px;
+        min-height: 760px;
+        padding: 28px;
+        border: 1px solid rgba(255, 255, 255, 0.13);
+        border-radius: 32px;
+        background:
+          linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.028)),
+          rgba(8, 5, 16, 0.72);
+        box-shadow:
+          0 44px 120px rgba(0, 0, 0, 0.46),
+          inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        overflow: hidden;
+      }
+
+      .diagram::before {
+        position: absolute;
+        inset: 8% 14% auto;
+        height: 34%;
+        border-radius: 999px;
+        background: radial-gradient(circle, rgba(255, 159, 207, 0.2), transparent 70%);
+        filter: blur(28px);
+        content: "";
+      }
+
+      .connectors {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      .connectors path {
+        fill: none;
+        stroke: url("#flowGradient");
+        stroke-width: 2.4;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        filter: drop-shadow(0 0 8px rgba(255, 159, 207, 0.42));
+      }
+
+      .connectors .soft-path {
+        stroke: rgba(200, 180, 255, 0.34);
+        stroke-width: 1.6;
+        stroke-dasharray: 5 9;
+        filter: none;
+      }
+
+      .connectors .fallback-path {
+        stroke: rgba(255, 226, 166, 0.55);
+        stroke-width: 1.8;
+        stroke-dasharray: 7 8;
+      }
+
+      .layer {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        min-width: 0;
+      }
+
+      .layer-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        min-height: 42px;
+        padding: 0 4px;
+        color: rgba(255, 248, 255, 0.88);
+        font-size: 0.82rem;
+        font-weight: 850;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .layer-title span {
+        color: rgba(255, 248, 255, 0.42);
+        font-size: 0.7rem;
+      }
+
+      .card,
+      .stage,
+      .memory-card,
+      .output-card {
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background:
+          linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.042)),
+          var(--panel);
+        box-shadow:
+          0 20px 58px rgba(0, 0, 0, 0.28),
+          inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(18px);
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .node-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+        color: var(--rose);
+        font-size: 0.72rem;
+        font-weight: 850;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .node-label::before {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: currentColor;
+        box-shadow: 0 0 18px currentColor;
+        content: "";
+      }
+
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h2,
+      h3 {
+        letter-spacing: 0;
+      }
+
+      h2 {
+        margin-bottom: 14px;
+        font-size: 1.34rem;
+        line-height: 1.16;
+      }
+
+      h3 {
+        margin-bottom: 9px;
+        font-size: 1.02rem;
+        line-height: 1.22;
+      }
+
+      p {
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .card p,
+      .stage p,
+      .memory-card p,
+      .output-card p {
+        margin-bottom: 0;
+        font-size: 0.88rem;
+      }
+
+      ul {
+        display: grid;
+        gap: 8px;
+        margin: 16px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      li {
+        position: relative;
+        padding-left: 18px;
+        color: var(--muted);
+        font-size: 0.84rem;
+        line-height: 1.38;
+      }
+
+      li::before {
+        position: absolute;
+        top: 0.57em;
+        left: 0;
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: rgba(255, 193, 221, 0.9);
+        content: "";
+      }
+
+      .telegram {
+        min-height: 248px;
+        border-color: rgba(255, 159, 207, 0.34);
+        background:
+          radial-gradient(circle at 18% 16%, rgba(255, 159, 207, 0.2), transparent 44%),
+          linear-gradient(145deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.05)),
+          rgba(18, 10, 32, 0.86);
+      }
+
+      .phone-shell {
+        display: grid;
+        gap: 8px;
+        margin-top: 18px;
+        padding: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.13);
+        border-radius: 18px;
+        background: rgba(4, 3, 9, 0.34);
+      }
+
+      .bubble {
+        width: fit-content;
+        max-width: 92%;
+        padding: 8px 10px;
+        border-radius: 12px;
+        color: rgba(255, 248, 255, 0.88);
+        font-size: 0.78rem;
+        line-height: 1.25;
+        background: rgba(255, 255, 255, 0.09);
+      }
+
+      .bubble.user {
+        justify-self: end;
+        background: linear-gradient(135deg, rgba(143, 93, 255, 0.74), rgba(255, 159, 207, 0.54));
+      }
+
+      .partner {
+        border-color: rgba(200, 180, 255, 0.28);
+      }
+
+      .quiz {
+        border-color: rgba(255, 193, 221, 0.28);
+      }
+
+      .episode {
+        border-color: rgba(255, 159, 207, 0.3);
+      }
+
+      .memory-zone {
+        flex: 1;
+        padding: 18px;
+        border: 1px solid rgba(200, 180, 255, 0.2);
+        border-radius: 26px;
+        background:
+          radial-gradient(circle at 48% 0%, rgba(143, 93, 255, 0.18), transparent 45%),
+          rgba(255, 255, 255, 0.04);
+      }
+
+      .memory-zone .layer-title {
+        min-height: 32px;
+        margin-bottom: 8px;
+      }
+
+      .memory-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .memory-card {
+        padding: 16px;
+      }
+
+      .private-memory {
+        border-color: rgba(255, 159, 207, 0.32);
+      }
+
+      .shared-memory {
+        border-color: rgba(200, 180, 255, 0.36);
+        background:
+          linear-gradient(145deg, rgba(200, 180, 255, 0.13), rgba(255, 255, 255, 0.04)),
+          var(--panel-strong);
+      }
+
+      .wiki-memory {
+        border-color: rgba(148, 255, 224, 0.34);
+      }
+
+      .tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-top: 14px;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 24px;
+        padding: 0 9px;
+        border: 1px solid rgba(255, 255, 255, 0.13);
+        border-radius: 999px;
+        color: rgba(255, 248, 255, 0.8);
+        font-size: 0.68rem;
+        font-weight: 760;
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .wiki {
+        min-height: 210px;
+        border-color: rgba(148, 255, 224, 0.32);
+        background:
+          radial-gradient(circle at 86% 8%, rgba(148, 255, 224, 0.18), transparent 38%),
+          linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04)),
+          var(--panel);
+      }
+
+      .wiki .node-label {
+        color: var(--mint);
+      }
+
+      .pipeline {
+        display: grid;
+        gap: 12px;
+        padding: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.13);
+        border-radius: 26px;
+        background:
+          linear-gradient(180deg, rgba(143, 93, 255, 0.12), rgba(255, 159, 207, 0.08)),
+          rgba(255, 255, 255, 0.04);
+      }
+
+      .stage {
+        position: relative;
+        padding: 15px 15px 15px 50px;
+        min-height: 94px;
+      }
+
+      .stage::before {
+        position: absolute;
+        top: 18px;
+        left: 16px;
+        display: grid;
+        place-items: center;
+        width: 23px;
+        height: 23px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, var(--lavender), var(--pink));
+        color: #17091f;
+        content: attr(data-step);
+        font-size: 0.72rem;
+        font-weight: 900;
+      }
+
+      .stage + .stage::after {
+        position: absolute;
+        top: -18px;
+        left: 27px;
+        width: 1px;
+        height: 20px;
+        background: rgba(255, 255, 255, 0.19);
+        content: "";
+      }
+
+      .fallback {
+        border-color: rgba(255, 226, 166, 0.36);
+        background:
+          radial-gradient(circle at 18% 18%, rgba(255, 226, 166, 0.15), transparent 46%),
+          linear-gradient(145deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.04)),
+          var(--panel);
+      }
+
+      .fallback .node-label {
+        color: var(--gold);
+      }
+
+      .output-card {
+        padding: 20px;
+        min-height: 280px;
+        border-color: rgba(255, 159, 207, 0.36);
+        background:
+          radial-gradient(circle at 18% 16%, rgba(255, 159, 207, 0.23), transparent 45%),
+          linear-gradient(145deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.052)),
+          rgba(23, 11, 35, 0.88);
+      }
+
+      .coaching-preview {
+        display: grid;
+        gap: 9px;
+        margin-top: 20px;
+        padding: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.13);
+        border-radius: 18px;
+        background: rgba(5, 3, 9, 0.34);
+      }
+
+      .coaching-preview strong {
+        color: var(--text);
+        font-size: 0.86rem;
+      }
+
+      .coaching-preview span {
+        color: var(--muted);
+        font-size: 0.8rem;
+        line-height: 1.42;
+      }
+
+      .callout {
+        margin-top: auto;
+        padding: 18px;
+        border: 1px solid rgba(255, 159, 207, 0.24);
+        border-radius: 20px;
+        background: rgba(255, 159, 207, 0.065);
+      }
+
+      .callout strong {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 0.92rem;
+      }
+
+      .caption {
+        display: flex;
+        justify-content: center;
+        margin: 24px auto 0;
+        color: rgba(255, 248, 255, 0.84);
+        font-size: clamp(0.95rem, 1.4vw, 1.2rem);
+        line-height: 1.5;
+        text-align: center;
+      }
+
+      .caption span {
+        max-width: 900px;
+        padding: 15px 20px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.055);
+        box-shadow: 0 16px 50px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(14px);
+      }
+
+      @media (max-width: 1180px) {
+        main {
+          width: min(100% - 32px, 900px);
+          padding: 32px 0;
+        }
+
+        .hero {
+          grid-template-columns: 1fr;
+        }
+
+        .legend {
+          justify-self: start;
+        }
+
+        .diagram {
+          grid-template-columns: 1fr;
+          min-height: auto;
+        }
+
+        .connectors {
+          display: none;
+        }
+
+        .layer {
+          gap: 12px;
+        }
+
+        .memory-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .pipeline {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .stage + .stage::after {
+          display: none;
+        }
+      }
+
+      @media (max-width: 720px) {
+        main {
+          width: min(100% - 24px, 540px);
+        }
+
+        .legend,
+        .memory-grid,
+        .pipeline {
+          grid-template-columns: 1fr;
+        }
+
+        .diagram {
+          padding: 16px;
+          border-radius: 24px;
+        }
+
+        .caption span {
+          border-radius: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header class="hero" aria-label="Diagram title">
+        <div>
+          <p class="eyebrow">Telegram-first relationship coaching</p>
+          <h1>Hitch Product Harness</h1>
+          <p class="lede">
+            A layered system that collects relationship signals, grounds them in
+            memory, analyzes mismatch, and returns believable coaching.
+          </p>
+        </div>
+        <aside class="legend" aria-label="Legend">
+          <span><i></i>Raw relationship input</span>
+          <span class="structured"><i></i>Structured understanding</span>
+          <span class="grounding"><i></i>Memory and grounding</span>
+          <span class="fallback"><i></i>Reliability path</span>
+        </aside>
+      </header>
+
+      <section
+        class="diagram"
+        role="img"
+        aria-label="Layered signal-flow diagram showing Telegram input, quiz and episode signals, partner signal, memory and LLM wiki grounding, coaching pipeline, fallback layer, and coaching output back to Telegram."
+      >
+        <svg class="connectors" viewBox="0 0 1520 760" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#ff9fcf" />
+              <stop offset="50%" stop-color="#c8b4ff" />
+              <stop offset="100%" stop-color="#94ffe0" />
+            </linearGradient>
+            <marker
+              id="arrow"
+              markerWidth="10"
+              markerHeight="10"
+              refX="8"
+              refY="5"
+              orient="auto"
+              markerUnits="strokeWidth"
+            >
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#e9c7ff" />
+            </marker>
+          </defs>
+          <path d="M 248 250 C 330 250 330 148 412 148" marker-end="url(#arrow)" />
+          <path d="M 248 250 C 330 250 330 338 412 338" marker-end="url(#arrow)" />
+          <path d="M 588 148 C 650 148 650 336 720 336" marker-end="url(#arrow)" />
+          <path d="M 588 338 C 650 338 650 410 720 410" marker-end="url(#arrow)" />
+          <path d="M 585 548 C 648 548 650 482 720 482" marker-end="url(#arrow)" />
+          <path class="soft-path" d="M 873 273 C 938 188 1032 154 1100 142" marker-end="url(#arrow)" />
+          <path class="soft-path" d="M 873 486 C 940 590 1032 626 1100 620" marker-end="url(#arrow)" />
+          <path d="M 1128 148 C 1198 148 1200 174 1268 174" marker-end="url(#arrow)" />
+          <path d="M 1128 620 C 1204 620 1208 342 1268 342" marker-end="url(#arrow)" />
+          <path d="M 1268 508 C 1202 508 1198 660 1128 660" marker-end="url(#arrow)" />
+          <path class="fallback-path" d="M 1128 660 C 1224 706 1324 664 1390 540" marker-end="url(#arrow)" />
+        </svg>
+
+        <div class="layer">
+          <div class="layer-title">Interface <span>Collect</span></div>
+          <article class="card telegram">
+            <span class="node-label">Telegram Interface</span>
+            <h2>Lightweight user surface</h2>
+            <p>Onboarding, quiz, free-text input, and coaching output all happen in chat.</p>
+            <div class="phone-shell" aria-hidden="true">
+              <span class="bubble">What made you feel loved recently?</span>
+              <span class="bubble user">They remembered my stressful deadline.</span>
+              <span class="bubble">I can work with that.</span>
+            </div>
+          </article>
+          <div class="callout">
+            <strong>More than a chatbot</strong>
+            <p>Telegram is the entry point. The harness beneath it does the interpretation work.</p>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-title">Signal Capture <span>Self + Partner</span></div>
+          <article class="card quiz">
+            <span class="node-label">Quiz Layer</span>
+            <h3>Baseline love-language preference</h3>
+            <p>Captures recurring preference signals before the model interprets a moment.</p>
+            <div class="tag-row">
+              <span class="tag">Words</span>
+              <span class="tag">Acts</span>
+              <span class="tag">Time</span>
+            </div>
+          </article>
+
+          <article class="card episode">
+            <span class="node-label">Episode Input</span>
+            <h3>Recent loved moment</h3>
+            <p>Raw free text preserves emotional nuance and context from the user.</p>
+            <div class="tag-row">
+              <span class="tag">Raw input</span>
+              <span class="tag">Emotion</span>
+            </div>
+          </article>
+
+          <article class="card partner">
+            <span class="node-label">Partner Signal</span>
+            <h3>Counterpart relationship data</h3>
+            <p>Partner mock or partner data gives Hitch another side of the relationship pattern.</p>
+            <div class="tag-row">
+              <span class="tag">Partner mock</span>
+              <span class="tag">Counter-signal</span>
+            </div>
+          </article>
+        </div>
+
+        <div class="layer">
+          <div class="memory-zone">
+            <div class="layer-title">Memory Layer <span>Ground + Structure</span></div>
+            <div class="memory-grid">
+              <article class="memory-card private-memory">
+                <span class="node-label">Private Memory</span>
+                <h3>Raw user input</h3>
+                <p>Original quiz answers and episode text stay available for faithful recall.</p>
+              </article>
+
+              <article class="memory-card shared-memory">
+                <span class="node-label">Shared Relationship State</span>
+                <h3>Structured signals</h3>
+                <p>Raw moments become interpretable relationship state: needs, gestures, gaps, and patterns.</p>
+                <div class="tag-row">
+                  <span class="tag">Needs</span>
+                  <span class="tag">Signals</span>
+                  <span class="tag">Mismatch</span>
+                </div>
+              </article>
+
+              <article class="memory-card wiki-memory">
+                <span class="node-label">Wiki Memory</span>
+                <h3>Grounded relationship knowledge</h3>
+                <p>Love-language concepts and interpretation rules stabilize coaching over time.</p>
+              </article>
+            </div>
+          </div>
+
+          <article class="card wiki">
+            <span class="node-label">LLM Wiki / Grounding</span>
+            <h2>Long-term memory and interpretation grounding</h2>
+            <p>
+              The wiki is part of the product harness, not just storage. It helps the
+              AI map relationship episodes to stable, explainable coaching frames.
+            </p>
+          </article>
+        </div>
+
+        <div class="layer">
+          <div class="layer-title">Coaching Pipeline <span>Analyze</span></div>
+          <div class="pipeline">
+            <article class="stage" data-step="1">
+              <h3>Extraction</h3>
+              <p>Pulls love-language cues, emotional needs, and context from raw episodes.</p>
+            </article>
+            <article class="stage" data-step="2">
+              <h3>Gap Analysis</h3>
+              <p>Compares self signals with partner signals to find believable mismatch.</p>
+            </article>
+            <article class="stage" data-step="3">
+              <h3>Coaching Generation</h3>
+              <p>Turns interpretation into concrete, gentle, relationship-safe guidance.</p>
+            </article>
+            <article class="stage" data-step="4">
+              <h3>Self-Eval</h3>
+              <p>Checks tone, grounding, usefulness, and whether the answer earned trust.</p>
+            </article>
+          </div>
+
+          <article class="card fallback">
+            <span class="node-label">Fallback Layer</span>
+            <h3>Reliability path</h3>
+            <p>When live generation is weak or delayed, Hitch can use a backup narrative path.</p>
+            <div class="tag-row">
+              <span class="tag">Delay handling</span>
+              <span class="tag">Backup story</span>
+            </div>
+          </article>
+        </div>
+
+        <div class="layer">
+          <div class="layer-title">Return <span>Coach</span></div>
+          <article class="output-card">
+            <span class="node-label">Coaching Output</span>
+            <h2>Believable guidance returned to Telegram</h2>
+            <p>
+              Hitch responds naturally in chat, but the advice is backed by signals,
+              memory, grounding, gap analysis, and quality checks.
+            </p>
+            <div class="coaching-preview" aria-hidden="true">
+              <strong>What Hitch might say</strong>
+              <span>
+                "You seem to feel loved when effort is remembered. Your partner may be
+                expressing care differently, so try naming one concrete act that would
+                help this week."
+              </span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <p class="caption">
+        <span>
+          Not just a prompt-response bot, but a layered coaching system that turns
+          relationship signals into grounded guidance.
+        </span>
+      </p>
+    </main>
+  </body>
+</html>

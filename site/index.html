@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hitch - 관계를 위한 AI 코치</title>
+    <meta
+      name="description"
+      content="Hitch는 권태기와 잦은 다툼을 겪는 관계를 위해 서로에게 더 잘 닿는 사랑 표현 방식을 찾아주는 AI 코치입니다."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="#top">Hitch</a>
+        <nav class="nav-links" aria-label="페이지 메뉴">
+          <a href="#intro">소개</a>
+          <a href="#run">실행</a>
+          <a href="#harness">하네스</a>
+          <a href="#flow">작동 방식</a>
+        </nav>
+        <a class="header-cta" href="#run">바로 실행</a>
+      </header>
+
+      <main id="top">
+        <section class="hero" id="run">
+          <div class="hero-copy">
+            <p class="eyebrow">권태기와 잦은 다툼을 겪는 관계를 위한 AI 코치</p>
+            <h1>Hitch</h1>
+            <p class="hero-lede">
+              사랑은 있는데 자꾸 어긋나는 두 사람에게, 서로에게 더 잘 닿는
+              표현 방식을 찾아줍니다.
+            </p>
+            <div class="hero-actions">
+              <a class="button primary" href="#intro">어떻게 돕나요</a>
+              <a class="button secondary" href="#flow">작동 방식</a>
+            </div>
+          </div>
+
+          <aside class="run-panel" aria-label="Hitch 실행 명령어">
+            <div class="avatar-frame" aria-hidden="true">
+              <img
+                src="./assets/hitch-avatar.png"
+                alt=""
+                width="1254"
+                height="1254"
+                loading="eager"
+              />
+            </div>
+
+            <div class="code-card">
+              <div class="code-card-header">
+                <div>
+                  <span class="panel-label">로컬 실행</span>
+                  <h2>복사해서 바로 시작</h2>
+                </div>
+                <button class="copy-button" type="button" data-copy-target="run-code">
+                  복사
+                </button>
+              </div>
+              <pre><code id="run-code" data-copy-text="git clone https://github.com/taaeyong/hitch.git&#10;cd hitch&#10;uv sync&#10;cp .env.example .env&#10;# .env에서 HITCH_TELEGRAM_TOKEN만 교체&#10;uv run hitch bot"><span class="token command">git clone</span> <span class="token url">https://github.com/taaeyong/hitch.git</span>
+<span class="token command">cd</span> hitch
+<span class="token command">uv sync</span>
+<span class="token command">cp</span> .env.example .env
+<span class="token comment"># .env에서 HITCH_TELEGRAM_TOKEN만 교체</span>
+<span class="token command">uv run</span> hitch bot</code></pre>
+            </div>
+          </aside>
+        </section>
+
+        <section class="section" id="intro">
+          <div class="section-heading">
+            <p class="eyebrow">소개</p>
+            <h2>Hitch가 돕는 순간</h2>
+            <p>
+              서로를 사랑하지 않는 것이 아니라, 사랑을 느끼는 방식이 달라서
+              어긋나는 순간이 있습니다. Hitch는 그 차이를 부드럽게 드러내고,
+              이번 주에 해볼 수 있는 작은 행동으로 바꿔줍니다.
+            </p>
+          </div>
+
+          <div class="feature-grid">
+            <article class="feature-card">
+              <span class="feature-dot"></span>
+              <h3>짧은 질문</h3>
+              <p>부담 없는 선택형 질문으로 사랑을 느끼는 방식을 살펴봅니다.</p>
+            </article>
+            <article class="feature-card">
+              <span class="feature-dot"></span>
+              <h3>감정 회고</h3>
+              <p>최근 사랑받았다고 느낀 순간을 한두 문장으로 남깁니다.</p>
+            </article>
+            <article class="feature-card">
+              <span class="feature-dot"></span>
+              <h3>차이 발견</h3>
+              <p>두 사람의 표현 방식과 기대가 어디서 달라지는지 정리합니다.</p>
+            </article>
+            <article class="feature-card">
+              <span class="feature-dot"></span>
+              <h3>작은 제안</h3>
+              <p>이번 주에 바로 시도할 수 있는 관계 코칭을 건넵니다.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section harness-section" id="harness">
+          <div class="section-heading compact">
+            <p class="eyebrow">Hackathon systems diagram</p>
+            <h2>Harness as an orchestrated AI system</h2>
+            <p>
+              The harness separates goal definition, implementation, and alignment
+              into distinct roles. The result is not one model doing everything; it is
+              a layered system coordinating specialized agents toward a shippable target.
+            </p>
+          </div>
+
+          <div
+            class="harness-diagram"
+            role="img"
+            aria-label="Layered harness diagram showing Oboros defining the target, Codex implementing it, and Atlas or OpenClaw monitoring alignment around the work."
+          >
+            <div class="diagram-orbit alignment-orbit" aria-hidden="true">
+              <span>Alignment monitor</span>
+              <span>Blocker resolver</span>
+              <span>Process steward</span>
+            </div>
+
+            <div class="diagram-layer alignment-layer">
+              <div class="agent-node guardian">
+                <span class="node-kicker">Atlas / OpenClaw</span>
+                <strong>Monitor the process</strong>
+                <p>Resolve blockers, check progress against the contract, and keep the system aligned.</p>
+              </div>
+            </div>
+
+            <div class="diagram-layer target-layer">
+              <div class="agent-node target">
+                <span class="node-kicker">Oboros</span>
+                <strong>Define the target</strong>
+                <p>Interview the user, extract the seed, and produce the acceptance contract.</p>
+              </div>
+            </div>
+
+            <div class="diagram-core">
+              <div class="contract-panel">
+                <span class="node-kicker">Acceptance contract</span>
+                <strong>Shared target state</strong>
+                <ul>
+                  <li>Intent captured through interview</li>
+                  <li>Seed translated into scope</li>
+                  <li>Done criteria made explicit</li>
+                </ul>
+              </div>
+
+              <div class="agent-node executor">
+                <span class="node-kicker">Codex</span>
+                <strong>Implement the target</strong>
+                <p>Turn the acceptance contract into working code, tests, and deliverable artifacts.</p>
+              </div>
+            </div>
+
+            <div class="diagram-callouts" aria-label="System principles">
+              <span>Role separation</span>
+              <span>Orchestration over raw generation</span>
+              <span>Reliable shipping loop</span>
+            </div>
+          </div>
+
+          <p class="diagram-caption">
+            “The harness is the layered system that helps AI define the goal, execute
+            the work, stay aligned, and ship reliable results.”
+          </p>
+        </section>
+
+        <section class="section" id="flow">
+          <div class="section-heading compact">
+            <p class="eyebrow">작동 방식</p>
+            <h2>대화는 가볍게, 정리는 조용하게</h2>
+          </div>
+
+          <ol class="flow-list">
+            <li>
+              <strong>시작하기</strong>
+              <span>텔레그램에서 Hitch를 시작합니다.</span>
+            </li>
+            <li>
+              <strong>질문 답하기</strong>
+              <span>짧은 질문에 답하며 나의 사랑 언어를 확인합니다.</span>
+            </li>
+            <li>
+              <strong>순간 남기기</strong>
+              <span>최근 사랑받았다고 느낀 순간을 기록합니다.</span>
+            </li>
+            <li>
+              <strong>제안 받기</strong>
+              <span>Hitch가 두 사람의 차이를 정리하고 작은 실천을 제안합니다.</span>
+            </li>
+          </ol>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <span>Hitch</span>
+        <span>사랑의 언어 기반 관계 코칭 텔레그램 서비스</span>
+      </footer>
+    </div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
