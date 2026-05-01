@@ -1,12 +1,12 @@
-# Hitch v4
+# Hitch
 
-Hitch v4는 사랑의 언어를 단발성 테스트로 끝내지 않고, 관계의 맥락과 반복 패턴을 장기적으로 이해하는 **relationship understanding system**을 목표로 하는 실험 레포다.
+Hitch는 사랑의 언어를 단발성 테스트로 끝내지 않고, 관계의 맥락과 반복 패턴을 장기적으로 이해하는 **relationship understanding system**을 목표로 하는 실험 레포다.
 
 이 레포는 최종 `hitch` 제품으로 바로 들어가기 전,
 `hitch-test-v4`에서 먼저 구조를 검증하고 제품 철학, 위키 구조, 시뮬레이션 방식, 운영 방식을 다듬기 위한 독립 구현 공간이다.
 
 ## 이 레포가 하려는 것
-Hitch v4는 다음을 함께 다루려 한다.
+Hitch는 다음을 함께 다루려 한다.
 - Telegram 기반 관계 코칭 경험
 - relationship space 단위의 독립 운영
 - daily / weekly 관계 질문 루프
@@ -102,7 +102,7 @@ Atlas는 단순 사후 리뷰어가 아니다.
 예시:
 ```bash
 cd /Users/taaeyong/projects/hitch-test-v4
-omx ralph --prd "Implement iteration 2 for Hitch v4 using ops/ralph-prompt-iteration-2.md and the current spec/ + ops/ documents"
+omx ralph --prd "Implement iteration 2 for Hitch using ops/ralph-prompt-iteration-2.md and the current spec/ + ops/ documents"
 ```
 
 또는 `ops/ralph-prompt-iteration-2.md` 내용을 직접 참고해 실행한다.
@@ -132,7 +132,7 @@ omx ralph --prd "Implement iteration 2 for Hitch v4 using ops/ralph-prompt-itera
 자세한 경계는 `ops/boundaries.md` 참고.
 
 ## 현재 상태
-이 레포는 현재 Hitch v4의 iteration 2 core 단계다.
+이 레포는 현재 Hitch의 iteration 2 core 단계다.
 완성품은 아니지만, relationship space / ingest / wiki / simulation / daily-weekly flow가 서로 연결되는 최소 실제 구조를 갖췄다.
 
 ## 다음 목표
