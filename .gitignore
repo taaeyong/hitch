@@ -15,8 +15,13 @@ raw/**
 *.csv
 *.txt
 
-# Generated derived wiki/simulation data: keep tracked for demo history.
-# Raw private inputs remain ignored above; derived outputs under data/ are intentionally tracked.
+# Generated derived wiki/simulation data from private relationship inputs.
+# Keep grounded rehearsal outputs local-only unless explicitly sanitized elsewhere.
+data/**
+!data/
+!data/README.md
+!data/**/
+!data/**/.gitkeep
 
 # Local runtime / operator files
 ops/run-status.md

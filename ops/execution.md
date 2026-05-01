@@ -61,6 +61,8 @@ The current runnable demo is pure Python with no new runtime dependencies. Use:
 ```bash
 python3 -m unittest discover -s tests
 PYTHONPYCACHEPREFIX=/tmp/hitch-v4-pycache python3 -m compileall hitch tests
+python3 -m hitch.demo prepare
+python3 -m hitch.demo simulation "이번 주 내가 놓친 관계 신호를 점검해줘"
 ```
 These checks validate the relationship-space, ingest, wiki, simulation, and daily/weekly wiring before Atlas review.
 

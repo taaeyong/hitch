@@ -94,22 +94,27 @@ Atlas는 단순 사후 리뷰어가 아니다.
 - 데모에서는 Telegram 시작 → 질문/답변 → simulation → wiki 성장 → artifact 확인 흐름을 중시한다
 
 ### 현재 권장 실행 경로
-이 레포의 기본 구현 실행 경로는 vanilla Codex 기준이다.
+이 레포의 기본 구현 실행 경로는 vanilla Codex 기준이지만, 로컬 리허설 런타임은
+이제 Python entrypoint로 직접 실행한다.
 
-예시:
 ```bash
-cd /Users/taaeyong/projects/hitch
-codex --yolo "Read README.md, spec/, and ops/codex-prompt.md, then implement the intended Hitch demo in small coherent commit/push slices."
+python3 -m hitch.demo prepare
+python3 -m hitch.demo simulation "이번 주 내가 놓친 관계 신호를 점검해줘"
+python3 -m hitch.demo rehearse
+python3 -m hitch --check
+python3 -m hitch.demo telegram
 ```
 
-또는 `ops/codex-prompt.md` 내용을 직접 참고해 실행한다.
+`prepare`/`simulation`/`rehearse`는 `raw/girlfriend_kakaotalk.csv`를 기반으로
+ignored `data/` 아래에 relationship space, wiki signals, simulation records, graph payload를 만든다.
+`telegram`은 `.env`의 `HITCH_TELEGRAM_TOKEN`을 읽고 토큰 값은 출력하지 않는다.
 
 ### 실행 전 먼저 볼 문서
-- `spec/iteration-2.md`
+- `spec/demo-run.md`
+- `spec/simulation-run.md`
 - `ops/runbook.md`
 - `ops/execution.md`
 - `ops/boundaries.md`
-- `ops/ralph-prompt-iteration-2.md`
 
 ## private 데이터 경계
 다음은 원격 push 금지다.

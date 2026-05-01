@@ -43,6 +43,21 @@ Before a serious run or demo:
 6. confirm demo-safe artifact layer does not expose private data
 
 ## Current Launch Commands
+Prepare local grounded rehearsal state:
+```bash
+python3 -m hitch.demo prepare
+```
+
+Run one grounded simulation feedback loop:
+```bash
+python3 -m hitch.demo simulation "이번 주 내가 놓친 관계 신호를 점검해줘"
+```
+
+Run the practical local rehearsal path:
+```bash
+python3 -m hitch.demo rehearse
+```
+
 Validate token/API reachability:
 ```bash
 python3 -m hitch --check
