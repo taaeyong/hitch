@@ -1,9 +1,8 @@
 # Hitch
 
-Hitch는 사랑의 언어를 단발성 테스트로 끝내지 않고, 관계의 맥락과 반복 패턴을 장기적으로 이해하는 **relationship understanding system**을 목표로 하는 실험 레포다.
+Hitch는 사랑의 언어를 단발성 테스트로 끝내지 않고, 관계의 맥락과 반복 패턴을 장기적으로 이해하는 **relationship understanding system**이다.
 
-이 레포는 최종 `hitch` 제품으로 바로 들어가기 전,
-`hitch-test-v4`에서 먼저 구조를 검증하고 제품 철학, 위키 구조, 시뮬레이션 방식, 운영 방식을 다듬기 위한 독립 구현 공간이다.
+이 레포는 Hitch의 현재 제품 방향과 구현 구조를 함께 담는 메인 작업 공간이다.
 
 ## 이 레포가 하려는 것
 Hitch는 다음을 함께 다루려 한다.
@@ -67,14 +66,12 @@ Hitch는 아무 말이나 잘 받아주는 범용 챗봇이 아니라,
 ## 실행/구현 방식
 이 레포는 보통 아래 루프로 운영한다.
 1. Atlas가 scope와 spec 경계를 정리한다
-2. `omx ralph` 기반 Codex 실행이 구현을 진행하고 commit을 남긴다
+2. vanilla Codex가 구현을 진행하고 commit/push를 남긴다
 3. Atlas가 제품 맥락, private boundary, drift를 검수한다
 4. 필요하면 iteration을 다시 돌린다
-5. push는 검수 후 진행한다
 
 즉:
-- **`omx ralph` = 기본 구현 실행 경로**
-- **Codex = 1차 구현자**
+- **vanilla Codex = 기본 구현 실행 경로**
 - **Atlas = 배경 의식 기반 reviewer + operator + controller**
 
 ## Atlas의 역할
@@ -97,15 +94,15 @@ Atlas는 단순 사후 리뷰어가 아니다.
 - 데모에서는 Telegram 시작 → 질문/답변 → simulation → wiki 성장 → artifact 확인 흐름을 중시한다
 
 ### 현재 권장 실행 경로
-이 레포의 기본 구현 실행 경로는 `omx ralph` 기준이다.
+이 레포의 기본 구현 실행 경로는 vanilla Codex 기준이다.
 
 예시:
 ```bash
-cd /Users/taaeyong/projects/hitch-test-v4
-omx ralph --prd "Implement iteration 2 for Hitch using ops/ralph-prompt-iteration-2.md and the current spec/ + ops/ documents"
+cd /Users/taaeyong/projects/hitch
+codex --yolo "Read README.md, spec/, and ops/codex-prompt.md, then implement the intended Hitch demo in small coherent commit/push slices."
 ```
 
-또는 `ops/ralph-prompt-iteration-2.md` 내용을 직접 참고해 실행한다.
+또는 `ops/codex-prompt.md` 내용을 직접 참고해 실행한다.
 
 ### 실행 전 먼저 볼 문서
 - `spec/iteration-2.md`
@@ -132,14 +129,12 @@ omx ralph --prd "Implement iteration 2 for Hitch using ops/ralph-prompt-iteratio
 자세한 경계는 `ops/boundaries.md` 참고.
 
 ## 현재 상태
-이 레포는 현재 Hitch의 iteration 2 core 단계다.
-완성품은 아니지만, relationship space / ingest / wiki / simulation / daily-weekly flow가 서로 연결되는 최소 실제 구조를 갖췄다.
+이 레포는 Hitch의 제품 스펙, 운영 문서, 실행 구조를 함께 담고 있으며, 제출 가능한 runnable demo 방향으로 정리 중이다.
 
 ## 다음 목표
-- iteration 3에서 parser/segmenter 깊이 확장
-- wiki signal/pattern induction 강화
-- grounded simulation prompt/runtime 연결
+- one-command demo entrypoint 정리
 - Telegram-facing flow 연결
+- minimal ingest와 wiki/simulation 연결
 - sanitized demo artifact 생성 경로 정리
 
 ---
