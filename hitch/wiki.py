@@ -6,7 +6,7 @@ from typing import Any
 
 from .ingest import MESSAGE_PATH
 from .paths import SPACE_DIR, WIKI_DIR
-from .storage import now_iso, read_json, write_json, write_jsonl
+from .storage import now_iso, read_json, read_jsonl, write_json, write_jsonl
 
 
 SPACE_STATE_PATH = SPACE_DIR / "state.json"
@@ -39,15 +39,7 @@ def create_or_refresh_space() -> dict[str, Any]:
 
 
 def _load_messages(path: Path = MESSAGE_PATH) -> list[dict[str, Any]]:
-    if not path.exists():
-        return []
-    rows: list[dict[str, Any]] = []
-    for line in path.read_text(encoding="utf-8").splitlines():
-        if line.strip():
-            import json
-
-            rows.append(json.loads(line))
-    return rows
+    return read_jsonl(path)
 
 
 def _keyword_hits(text: str) -> list[str]:
@@ -61,6 +53,8 @@ def _keyword_hits(text: str) -> list[str]:
 
 def build_wiki_state() -> dict[str, Any]:
     messages = _load_messages()
+    existing_summary = read_json(SUMMARY_PATH, {})
+    existing_deltas = read_jsonl(INTERACTIONS_PATH)
     sender_counts = Counter(row.get("sender") or "unknown" for row in messages)
     category_counts: Counter[str] = Counter()
     signals: list[dict[str, Any]] = []
@@ -88,6 +82,15 @@ def build_wiki_state() -> dict[str, Any]:
         )
 
     write_jsonl(SIGNALS_PATH, signals)
+    open_questions = [
+        "Which signals are stable patterns versus one-off context?",
+        "Where does expressed love fail to land as received love?",
+    ]
+    for delta in existing_deltas[-3:]:
+        question = delta.get("follow_up_question")
+        if question and question not in open_questions:
+            open_questions.append(question)
+
     summary = {
         "relationship_space_id": "main",
         "message_count": len(messages),
@@ -96,12 +99,15 @@ def build_wiki_state() -> dict[str, Any]:
         "signal_count": len(signals),
         "love_language_signal_counts": dict(category_counts),
         "sender_signal_counts": {sender: dict(counts) for sender, counts in sender_category_counts.items()},
-        "open_questions": [
-            "Which signals are stable patterns versus one-off context?",
-            "Where does expressed love fail to land as received love?",
-        ],
+        "open_questions": open_questions,
+        "simulation_delta_count": len(existing_deltas),
         "updated_at": now_iso(),
     }
+    latest_delta = existing_deltas[-1] if existing_deltas else None
+    if latest_delta:
+        summary["latest_interpretation_delta"] = latest_delta.get("interpretation_delta", "")
+    elif existing_summary.get("latest_interpretation_delta"):
+        summary["latest_interpretation_delta"] = existing_summary["latest_interpretation_delta"]
     write_json(SUMMARY_PATH, summary)
     return summary
 

@@ -33,6 +33,16 @@ def append_jsonl(path: Path, payload: Any) -> None:
         handle.write("\n")
 
 
+def read_jsonl(path: Path) -> list[Any]:
+    if not path.exists():
+        return []
+    rows: list[Any] = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            rows.append(json.loads(line))
+    return rows
+
+
 def write_jsonl(path: Path, rows: Iterable[Any]) -> int:
     path.parent.mkdir(parents=True, exist_ok=True)
     count = 0
