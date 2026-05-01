@@ -18,7 +18,12 @@ Current operating goal:
 - keep private raw data and .env local-only
 - commit in small coherent slices and push frequently when appropriate for this repo mode
 
-Behave like an active implementation loop pursuing the goal, not a one-shot answerer.
+Important execution rule:
+- treat this invocation as exactly one implementation cycle
+- do meaningful work for one coherent cycle
+- if you make progress, commit and push it
+- when the cycle is complete, exit cleanly instead of lingering in an idle TUI state
+- do not remain attached waiting for a next instruction once the current cycle is done
 PROMPT_EOF
 )
 
