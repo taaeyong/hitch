@@ -6,13 +6,14 @@ from typing import Any
 
 from .ingest import MESSAGE_PATH
 from .paths import SPACE_DIR, WIKI_DIR
-from .storage import now_iso, read_json, read_jsonl, write_json, write_jsonl
+from .storage import new_id, now_iso, read_json, read_jsonl, write_json, write_jsonl
 
 
 SPACE_STATE_PATH = SPACE_DIR / "state.json"
 SIGNALS_PATH = WIKI_DIR / "signals.jsonl"
 SUMMARY_PATH = WIKI_DIR / "summary.json"
 INTERACTIONS_PATH = WIKI_DIR / "interaction_deltas.jsonl"
+FEEDBACK_STATE_PATH = WIKI_DIR / "feedback_state.json"
 
 LOVE_LANGUAGE_KEYWORDS = {
     "words": ("고마워", "사랑", "좋아", "미안", "보고", "말", "칭찬", "thank", "love"),
@@ -20,6 +21,14 @@ LOVE_LANGUAGE_KEYWORDS = {
     "acts": ("해줄", "도와", "챙겨", "준비", "데려", "사줘", "해줘"),
     "gifts": ("선물", "샀", "사왔", "꽃", "기념"),
     "touch": ("안아", "손", "뽀뽀", "키스", "스킨십"),
+}
+SIGNAL_ALIASES = {
+    "words of affirmation": "words",
+    "quality time": "time",
+    "shared time and attentive follow-through": "time",
+    "acts of service": "acts",
+    "gifts or concrete tokens": "gifts",
+    "physical closeness": "touch",
 }
 
 
@@ -49,6 +58,12 @@ def _keyword_hits(text: str) -> list[str]:
         if any(keyword in lowered for keyword in keywords):
             hits.append(category)
     return hits
+
+
+def _canonical_signal(signal: str | None) -> str:
+    if not signal:
+        return "unclassified"
+    return SIGNAL_ALIASES.get(signal, signal)
 
 
 def build_wiki_state() -> dict[str, Any]:
@@ -91,6 +106,7 @@ def build_wiki_state() -> dict[str, Any]:
         if question and question not in open_questions:
             open_questions.append(question)
 
+    feedback_state = refresh_feedback_state()
     summary = {
         "relationship_space_id": "main",
         "message_count": len(messages),
@@ -101,6 +117,8 @@ def build_wiki_state() -> dict[str, Any]:
         "sender_signal_counts": {sender: dict(counts) for sender, counts in sender_category_counts.items()},
         "open_questions": open_questions,
         "simulation_delta_count": len(existing_deltas),
+        "feedback_loop_count": feedback_state.get("loop_count", 0),
+        "feedback_pattern_counts": feedback_state.get("pattern_counts", {}),
         "updated_at": now_iso(),
     }
     latest_delta = existing_deltas[-1] if existing_deltas else None
@@ -112,9 +130,43 @@ def build_wiki_state() -> dict[str, Any]:
     return summary
 
 
+def refresh_feedback_state() -> dict[str, Any]:
+    deltas = read_jsonl(INTERACTIONS_PATH)
+    pattern_counts: Counter[str] = Counter()
+    recent_deltas: list[dict[str, Any]] = []
+    open_questions: list[str] = []
+    for delta in deltas:
+        signal_delta = delta.get("signal_delta", {})
+        pattern = _canonical_signal(signal_delta.get("dominant_signal_used") or signal_delta.get("dominant_signal_label"))
+        pattern_counts[pattern] += signal_delta.get("simulated_loop_turns", 1)
+        question = delta.get("follow_up_question")
+        if question and question not in open_questions:
+            open_questions.append(question)
+        recent_deltas.append(
+            {
+                "id": delta.get("id"),
+                "created_at": delta.get("created_at"),
+                "pattern": pattern,
+                "pattern_label": signal_delta.get("dominant_signal_label"),
+                "interpretation_delta": delta.get("interpretation_delta", ""),
+                "follow_up_question": question,
+            }
+        )
+    state = {
+        "relationship_space_id": "main",
+        "loop_count": len(deltas),
+        "pattern_counts": dict(pattern_counts),
+        "recent_deltas": recent_deltas[-8:],
+        "open_questions": open_questions[-8:],
+        "updated_at": now_iso(),
+    }
+    write_json(FEEDBACK_STATE_PATH, state)
+    return state
+
+
 def record_interaction_delta(prompt: str, result: dict[str, Any]) -> dict[str, Any]:
     delta = {
-        "id": f"delta-{now_iso()}",
+        "id": new_id("delta"),
         "relationship_space_id": "main",
         "prompt": prompt,
         "signal_delta": result.get("signal_delta", {}),
@@ -129,6 +181,9 @@ def record_interaction_delta(prompt: str, result: dict[str, Any]) -> dict[str, A
     summary.setdefault("simulation_delta_count", 0)
     summary["simulation_delta_count"] += 1
     summary["latest_interpretation_delta"] = delta["interpretation_delta"]
+    feedback_state = refresh_feedback_state()
+    summary["feedback_loop_count"] = feedback_state["loop_count"]
+    summary["feedback_pattern_counts"] = feedback_state["pattern_counts"]
     summary["updated_at"] = now_iso()
     write_json(SUMMARY_PATH, summary)
     return delta

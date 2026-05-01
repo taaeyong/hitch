@@ -12,7 +12,7 @@ from .graph import GRAPH_PATH, export_graph
 from .simulation import SIMULATION_EFFECTS_PATH, SIMULATION_SNAPSHOT_PATH
 from .simulation import run_simulation
 from .storage import read_json, read_jsonl, write_json
-from .wiki import SUMMARY_PATH
+from .wiki import FEEDBACK_STATE_PATH, SUMMARY_PATH
 
 
 DAILY_QUESTION = "오늘 관계에서 사랑을 표현하거나 받고 싶었던 순간이 있었나요?"
@@ -82,9 +82,13 @@ def handle_text(text: str, chat_id: int, client: TelegramClient) -> None:
         prompt = normalized.removeprefix("/loop").strip() or DAILY_QUESTION
         result = run_simulation(prompt, source="telegram")
         export_graph()
+        feedback_state = read_json(FEEDBACK_STATE_PATH, {})
         client.send_message(
             chat_id,
-            f"{result['partner_perspective_estimate']}\n\n{result['gap_or_alignment_note']}\n\n다음 질문: {result['follow_up_question']}",
+            f"{result['partner_perspective_estimate']}\n\n"
+            f"{result['gap_or_alignment_note']}\n\n"
+            f"wiki feedback loops={feedback_state.get('loop_count', 0)}\n"
+            f"다음 질문: {result['follow_up_question']}",
         )
     elif normalized.startswith("/weekly"):
         report = _weekly_report()
@@ -100,10 +104,13 @@ def handle_text(text: str, chat_id: int, client: TelegramClient) -> None:
     elif normalized.startswith("/graph"):
         graph = export_graph()
         snapshot = read_json(SIMULATION_SNAPSHOT_PATH, {})
+        feedback_state = read_json(FEEDBACK_STATE_PATH, {})
         effect_count = snapshot.get("effect_count", len(read_jsonl(SIMULATION_EFFECTS_PATH)))
+        loop_count = feedback_state.get("loop_count", 0)
         client.send_message(
             chat_id,
-            f"Graph ready: {GRAPH_PATH} nodes={len(graph['nodes'])} edges={len(graph['edges'])} effects={effect_count}",
+            f"Graph ready: {GRAPH_PATH} nodes={len(graph['nodes'])} edges={len(graph['edges'])} "
+            f"effects={effect_count} feedback_loops={loop_count}",
         )
     else:
         result = run_simulation(normalized, source="telegram")

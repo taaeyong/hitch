@@ -69,7 +69,7 @@ Run the Telegram-first demo bot:
 python3 -m hitch
 ```
 
-The process stores relationship-space metadata, wiki signals, simulation records, and weekly reports under ignored local `data/` paths. Raw private files remain local-only and are not copied into tracked artifacts.
+The process stores relationship-space metadata, wiki signals, simulation feedback state, simulation records, graph payloads, and weekly reports under ignored local `data/` paths. Raw private files remain local-only and are not copied into tracked artifacts.
 
 ## Drift / Review Rule
 Atlas may use prior product context and background understanding to guide implementation choices, resolve ambiguity, and review Codex output.

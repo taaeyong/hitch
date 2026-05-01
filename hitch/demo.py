@@ -9,7 +9,7 @@ from .ingest import DEFAULT_RAW_CSV, ingest_girlfriend_csv
 from .paths import DATA_DIR, ENV_FILE, ensure_data_dirs
 from .simulation import SIMULATION_EFFECTS_PATH, SIMULATION_SNAPSHOT_PATH, run_simulation
 from .storage import write_json
-from .wiki import SUMMARY_PATH, create_or_refresh_space, build_wiki_state
+from .wiki import FEEDBACK_STATE_PATH, SUMMARY_PATH, create_or_refresh_space, build_wiki_state
 
 
 def prepare() -> dict[str, Any]:
@@ -22,6 +22,7 @@ def prepare() -> dict[str, Any]:
         "relationship_space": state,
         "ingest": ingest_meta,
         "summary_path": str(SUMMARY_PATH),
+        "feedback_state_path": str(FEEDBACK_STATE_PATH),
         "graph_path": str(GRAPH_PATH),
         "simulation_effects_path": str(SIMULATION_EFFECTS_PATH),
         "simulation_snapshot_path": str(SIMULATION_SNAPSHOT_PATH),

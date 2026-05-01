@@ -106,7 +106,8 @@ python3 -m hitch.demo telegram
 ```
 
 `prepare`/`simulation`/`rehearse`는 `raw/girlfriend_kakaotalk.csv`를 기반으로
-ignored `data/` 아래에 relationship space, wiki signals, simulation records, graph payload를 만든다.
+ignored `data/` 아래에 relationship space, wiki signals, simulation feedback state,
+simulation records, graph payload를 만든다.
 `telegram`은 `.env`의 `HITCH_TELEGRAM_TOKEN`을 읽고 토큰 값은 출력하지 않는다.
 
 ### 실행 전 먼저 볼 문서

@@ -4,8 +4,8 @@ from collections import Counter
 from typing import Any
 
 from .paths import SIMULATION_DIR
-from .storage import append_jsonl, now_iso, read_json, read_jsonl, write_json
-from .wiki import SUMMARY_PATH, record_interaction_delta
+from .storage import append_jsonl, new_id, now_iso, read_json, read_jsonl, write_json
+from .wiki import FEEDBACK_STATE_PATH, SUMMARY_PATH, record_interaction_delta, refresh_feedback_state
 
 
 SIMULATION_RUNS_PATH = SIMULATION_DIR / "runs.jsonl"
@@ -47,7 +47,7 @@ def run_simulation(prompt: str, source: str = "cli", persist: bool = True) -> di
         uncertainty = "low signal"
 
     result = {
-        "id": f"simulation-{now_iso()}",
+        "id": new_id("simulation"),
         "relationship_space_id": "main",
         "source": source,
         "prompt": prompt,
@@ -76,19 +76,23 @@ def run_simulation(prompt: str, source: str = "cli", persist: bool = True) -> di
         append_jsonl(SIMULATION_RUNS_PATH, result)
         delta = record_interaction_delta(prompt, result)
         refreshed_summary = read_json(SUMMARY_PATH, {})
+        feedback_state = refresh_feedback_state()
         effect = {
-            "id": f"effect-{now_iso()}",
+            "id": new_id("effect"),
             "relationship_space_id": result["relationship_space_id"],
             "simulation_run_id": result["id"],
             "interaction_delta_id": delta["id"],
             "source": source,
             "changed": {
                 "simulation_delta_count": refreshed_summary.get("simulation_delta_count", 0),
+                "feedback_loop_count": feedback_state.get("loop_count", 0),
+                "feedback_pattern_counts": feedback_state.get("pattern_counts", {}),
                 "latest_interpretation_delta": refreshed_summary.get("latest_interpretation_delta", ""),
                 "open_question": delta.get("follow_up_question", ""),
             },
             "graph_implication": {
                 "adds_interaction_delta_node": True,
+                "adds_feedback_state_artifact": True,
                 "links_to_pattern": dominant_key,
             },
             "created_at": now_iso(),
@@ -107,6 +111,12 @@ def run_simulation(prompt: str, source: str = "cli", persist: bool = True) -> di
                 "dominant_signal_label": dominant_label,
                 "latest_interpretation_delta": refreshed_summary.get("latest_interpretation_delta", ""),
                 "open_questions": refreshed_summary.get("open_questions", [])[-5:],
+            },
+            "feedback_state_path": str(FEEDBACK_STATE_PATH),
+            "feedback_state": {
+                "loop_count": feedback_state.get("loop_count", 0),
+                "pattern_counts": feedback_state.get("pattern_counts", {}),
+                "open_questions": feedback_state.get("open_questions", [])[-5:],
             },
             "run_count": len(read_jsonl(SIMULATION_RUNS_PATH)),
             "effect_count": len(read_jsonl(SIMULATION_EFFECTS_PATH)),

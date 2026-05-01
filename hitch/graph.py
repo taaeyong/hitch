@@ -5,7 +5,7 @@ from typing import Any
 from .paths import GRAPH_DIR
 from .simulation import SIMULATION_EFFECTS_PATH, SIMULATION_RUNS_PATH, SIMULATION_SNAPSHOT_PATH
 from .storage import now_iso, read_json, read_jsonl, write_json
-from .wiki import INTERACTIONS_PATH, SIGNALS_PATH, SPACE_STATE_PATH, SUMMARY_PATH
+from .wiki import FEEDBACK_STATE_PATH, INTERACTIONS_PATH, SIGNALS_PATH, SPACE_STATE_PATH, SUMMARY_PATH
 
 
 GRAPH_PATH = GRAPH_DIR / "relationship_graph.json"
@@ -35,6 +35,7 @@ def export_graph() -> dict[str, Any]:
     simulation_runs = read_jsonl(SIMULATION_RUNS_PATH)
     simulation_effects = read_jsonl(SIMULATION_EFFECTS_PATH)
     simulation_snapshot = read_json(SIMULATION_SNAPSHOT_PATH, {})
+    feedback_state = read_json(FEEDBACK_STATE_PATH, {})
     nodes: list[dict[str, Any]] = [
         {"id": "relationship:main", "type": "relationship", "label": space.get("relationship_type", "romantic")},
         {"id": "person:user", "type": "person", "label": "user"},
@@ -55,12 +56,21 @@ def export_graph() -> dict[str, Any]:
             "effect_count": simulation_snapshot.get("effect_count", len(simulation_effects)),
             "updated_at": simulation_snapshot.get("updated_at"),
         },
+        {
+            "id": "artifact:feedback-state",
+            "type": "artifact",
+            "label": "simulation feedback state",
+            "loop_count": feedback_state.get("loop_count", 0),
+            "pattern_counts": feedback_state.get("pattern_counts", {}),
+            "updated_at": feedback_state.get("updated_at"),
+        },
     ]
     edges: list[dict[str, Any]] = [
         {"source": "person:user", "target": "relationship:main", "type": "participates_in"},
         {"source": "person:partner", "target": "relationship:main", "type": "participates_in"},
         {"source": "artifact:wiki-summary", "target": "relationship:main", "type": "summarizes"},
         {"source": "artifact:simulation-snapshot", "target": "artifact:wiki-summary", "type": "summarizes_effects_on"},
+        {"source": "artifact:feedback-state", "target": "artifact:wiki-summary", "type": "updates"},
     ]
     for category, count in summary.get("love_language_signal_counts", {}).items():
         node_id = f"pattern:{category}"
@@ -86,6 +96,11 @@ def export_graph() -> dict[str, Any]:
         pattern_node_id = _pattern_node_id(delta.get("signal_delta", {}).get("dominant_signal_used"))
         if pattern_node_id:
             edges.append({"source": node_id, "target": pattern_node_id, "type": "uses_pattern"})
+            edges.append({"source": "artifact:feedback-state", "target": pattern_node_id, "type": "accumulates"})
+    for index, question in enumerate(feedback_state.get("open_questions", [])[-12:], start=1):
+        node_id = f"question:feedback-{index}"
+        nodes.append({"id": node_id, "type": "question", "label": question})
+        edges.append({"source": "artifact:feedback-state", "target": node_id, "type": "raises"})
     for index, run in enumerate(simulation_runs[-50:], start=1):
         node_id = f"simulation-run:{run.get('id', index)}"
         nodes.append(
