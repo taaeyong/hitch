@@ -15,12 +15,8 @@ raw/**
 *.csv
 *.txt
 
-# Generated private/derived data: track only safe scaffold docs/placeholders.
-data/**
-!data/
-!data/README.md
-!data/**/
-!data/**/.gitkeep
+# Generated derived wiki/simulation data: keep tracked for demo history.
+# Raw private inputs remain ignored above; derived outputs under data/ are intentionally tracked.
 
 # Local runtime / operator files
 ops/run-status.md
