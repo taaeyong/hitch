@@ -9,7 +9,7 @@ This folder is the structured source of truth for Hitch v4.
 4. `simulation.md`
 5. `ontology.md`
 6. `ingest.md`
-7. `demo.md`
+7. `demo-run.md`
 8. `ops.md`
 9. `roadmap.md`
 
@@ -20,7 +20,8 @@ This folder is the structured source of truth for Hitch v4.
 - `simulation.md`: simulation purpose, input/output, grounding, safety, persistence
 - `ontology.md`: node and edge vocabulary, graph direction, schema separation
 - `ingest.md`: raw txt intake, parsing, extraction, structuring assumptions
-- `demo.md`: Telegram-led demo flow, wiki growth, private/public boundary
+- `demo-run.md`: runnable demo contract, Telegram-led rehearsal flow, wiki growth, private/public boundary
+- `simulation-run.md`: repeated simulation loop, wiki feedback, graph artifact accumulation
 - `ops.md`: remote operation, Atlas guidance role, implementation review posture
 - `roadmap.md`: MVP scope and later expansions
 

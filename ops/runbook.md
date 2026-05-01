@@ -27,7 +27,8 @@ This runbook describes how Hitch v4 is operated as a relationship understanding 
 
 ## Core Files to Know
 - `spec/README.md`
-- `spec/iteration-2.md`
+- `spec/demo-run.md`
+- `spec/simulation-run.md`
 - `ops/boundaries.md`
 - `ops/demo-flow.md`
 - `ops/execution.md`

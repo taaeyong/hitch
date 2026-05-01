@@ -59,9 +59,9 @@ Hitch는 아무 말이나 잘 받아주는 범용 챗봇이 아니라,
 5. `spec/simulation.md`
 6. `spec/ontology.md`
 7. `spec/ingest.md`
-8. `spec/demo.md`
+8. `spec/demo-run.md`
 9. `spec/ops.md`
-10. `spec/iteration-2.md`
+10. `spec/simulation-run.md`
 
 ## 실행/구현 방식
 이 레포는 보통 아래 루프로 운영한다.

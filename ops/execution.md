@@ -33,7 +33,7 @@ Practical mode guidance:
 
 ### 1. Repo / Spec Work
 - read `spec/README.md`
-- follow `spec/iteration-2.md`
+- follow `spec/demo-run.md` and `spec/simulation-run.md`
 - extend the scaffold into a minimally real relationship-system core
 
 ### 2. Raw Ingest Work
