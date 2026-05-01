@@ -7,7 +7,15 @@ from pathlib import Path
 from hitch.ingest import parse_csv
 from hitch.simulation import run_simulation
 from hitch.storage import append_jsonl, write_jsonl
-from hitch import wiki
+from hitch import telegram, wiki
+
+
+class FakeTelegramClient:
+    def __init__(self) -> None:
+        self.messages: list[tuple[int, str]] = []
+
+    def send_message(self, chat_id: int, text: str) -> None:
+        self.messages.append((chat_id, text))
 
 
 class IngestTests(unittest.TestCase):
@@ -75,6 +83,17 @@ class IngestTests(unittest.TestCase):
         self.assertEqual(summary["simulation_delta_count"], 1)
         self.assertIn("latest_interpretation_delta", summary)
         self.assertIn("Which moment should be compared next?", summary["open_questions"])
+
+    def test_telegram_help_exposes_demo_commands(self) -> None:
+        client = FakeTelegramClient()
+        telegram.handle_text("/help", 42, client)  # type: ignore[arg-type]
+
+        self.assertEqual(len(client.messages), 1)
+        self.assertEqual(client.messages[0][0], 42)
+        self.assertIn("/daily", client.messages[0][1])
+        self.assertIn("/loop", client.messages[0][1])
+        self.assertIn("/weekly", client.messages[0][1])
+        self.assertIn("/graph", client.messages[0][1])
 
 
 if __name__ == "__main__":

@@ -15,6 +15,21 @@ from .wiki import SUMMARY_PATH
 
 
 DAILY_QUESTION = "오늘 관계에서 사랑을 표현하거나 받고 싶었던 순간이 있었나요?"
+HELP_TEXT = (
+    "Hitch rehearsal commands\n"
+    "/daily - 오늘의 관계 질문\n"
+    "/loop [상황] - 시뮬레이션 기반 관계 점검\n"
+    "/weekly - 누적 신호 리포트\n"
+    "/space - 현재 relationship space 요약\n"
+    "/graph - graph artifact 상태"
+)
+START_MESSAGES = (
+    "Hitch는 사랑이 어떻게 표현되고, 어떻게 도착하는지 같이 보는 relationship coach예요.",
+    "이번 리허설은 하나의 romantic relationship space를 만들고, 로컬에 있는 관계 기록으로 wiki 신호를 쌓아요.",
+    "파트너 초대는 지금은 건너뛰고 solo rehearsal로 진행할게요. 나중에 invite code나 bot link를 붙일 수 있어요.",
+    "지금 바로 시작해볼까요? /daily 로 첫 질문을 열거나 /loop 뒤에 상황을 적어 관계 신호를 점검할 수 있어요.",
+    HELP_TEXT,
+)
 
 
 class TelegramClient:
@@ -56,10 +71,10 @@ def handle_text(text: str, chat_id: int, client: TelegramClient) -> None:
     normalized = text.strip()
     if normalized.startswith("/start"):
         prepare()
-        client.send_message(
-            chat_id,
-            "Hitch rehearsal space를 준비했어요. /daily, /loop, /weekly, /graph 로 흐름을 확인할 수 있어요.",
-        )
+        for message in START_MESSAGES:
+            client.send_message(chat_id, message)
+    elif normalized.startswith("/help"):
+        client.send_message(chat_id, HELP_TEXT)
     elif normalized.startswith("/daily"):
         client.send_message(chat_id, DAILY_QUESTION)
     elif normalized.startswith("/loop"):
@@ -73,6 +88,7 @@ def handle_text(text: str, chat_id: int, client: TelegramClient) -> None:
     elif normalized.startswith("/weekly"):
         report = _weekly_report()
         write_json(SUMMARY_PATH.parent.parent / "reports" / "latest_weekly.json", {"text": report})
+        export_graph()
         client.send_message(chat_id, report)
     elif normalized.startswith("/space"):
         summary = read_json(SUMMARY_PATH, {})
